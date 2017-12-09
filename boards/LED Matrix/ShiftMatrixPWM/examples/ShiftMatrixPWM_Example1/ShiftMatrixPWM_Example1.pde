@@ -1,15 +1,15 @@
 /******************************************************************************
- * //Comments yet to to be updated 
- * 
+ * //Comments yet to to be updated
+ *
  * (c) Elco Jacobs, Sept 2011.
- * 
+ *
  *****************************************************************************/
 //#include <Servo.h>
 #include <SPI.h>
 #include "hsv2rgb.h"
 
 
-//Data pin is MOSI (atmega168/328: pin 11. Mega: 51) 
+//Data pin is MOSI (atmega168/328: pin 11. Mega: 51)
 //Clock pin is SCK (atmega168/328: pin 13. Mega: 52)
 const int ShiftMatrixPWM_columnLatchPin=9;
 const int ShiftMatrixPWM_rowDataPin=6;
@@ -32,31 +32,31 @@ int numColumns = numColumnRegisters*8;
 int numOutputs = numColumns*numRows;
 
 
-void setup()   {                
-  pinMode(ShiftMatrixPWM_columnLatchPin, OUTPUT); 
-  pinMode(ShiftMatrixPWM_rowDataPin, OUTPUT); 
-  pinMode(ShiftMatrixPWM_rowClockPin, OUTPUT); 
-  pinMode(ShiftMatrixPWM_rowLatchPin, OUTPUT); 
- 
- 
-  
-  SPI.setBitOrder(LSBFIRST);
-  // SPI_CLOCK_DIV2 is only a tiny bit faster in sending out the last byte. 
-  // SPI transfer and calculations overlap for the other bytes.
-  SPI.setClockDivider(SPI_CLOCK_DIV4); 
-  SPI.begin(); 
+void setup()   {
+  pinMode(ShiftMatrixPWM_columnLatchPin, OUTPUT);
+  pinMode(ShiftMatrixPWM_rowDataPin, OUTPUT);
+  pinMode(ShiftMatrixPWM_rowClockPin, OUTPUT);
+  pinMode(ShiftMatrixPWM_rowLatchPin, OUTPUT);
 
-  Serial.begin(9600);
+
+
+  SPI.setBitOrder(LSBFIRST);
+  // SPI_CLOCK_DIV2 is only a tiny bit faster in sending out the last byte.
+  // SPI transfer and calculations overlap for the other bytes.
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
+  SPI.begin();
+
+
 
 
   ShiftMatrixPWM.SetMatrixSize(numRows, numColumnRegisters);
-  ShiftMatrixPWM.Start(pwmFrequency,maxBrightness);  
+  ShiftMatrixPWM.Start(pwmFrequency,maxBrightness);
 }
 
 
 
 void loop()
-{    
+{
   // Print information about the interrupt frequency, duration and load on your program
   ShiftMatrixPWM.SetAll(0);
   ShiftMatrixPWM.PrintInterruptLoad();
@@ -67,12 +67,12 @@ void loop()
 
   // Fade in all outputs
   for(int j=0;j<maxBrightness;j++){
-    ShiftMatrixPWM.SetAll(j);  
+    ShiftMatrixPWM.SetAll(j);
     delay(20);
   }
   // Fade out all outputs
   for(int j=maxBrightness;j>=0;j--){
-    ShiftMatrixPWM.SetAll(j);  
+    ShiftMatrixPWM.SetAll(j);
     delay(20);
   }
 
@@ -96,13 +96,13 @@ void loop()
   }
 
   // Fade in and fade out all outputs slowly. Usefull for testing your circuit
-  ShiftMatrixPWM.OneByOneSlow();  
+  ShiftMatrixPWM.OneByOneSlow();
 
 }
 
 void rgbLedRainbow(int numRGBLeds, int delayVal, int numCycles, int maxBrightness, int rainbowWidth){
   // Displays a rainbow spread over all LED's, which shifts in hue.
-  int hue, sat, val; 
+  int hue, sat, val;
   unsigned char red, green, blue;
 
   ShiftMatrixPWM.SetAll(0);
@@ -118,6 +118,6 @@ void rgbLedRainbow(int numRGBLeds, int delayVal, int numCycles, int maxBrightnes
         ShiftMatrixPWM.SetGroupOf3(row, group, red, green, blue); // write rgb values
       }
       delay(delayVal);
-    } 
-  }  
+    }
+  }
 }

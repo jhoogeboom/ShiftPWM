@@ -1,6 +1,6 @@
 /*
 ShiftPWM.h - Library for Arduino to PWM many outputs using shift registers - Version 1
-Copyright (c) 2011 Elco Jacobs, Technical University of Eindhoven, department of 
+Copyright (c) 2011 Elco Jacobs, Technical University of Eindhoven, department of
 Industrial Design, Electronics Atelier.
 All right reserved.
 
@@ -30,7 +30,7 @@ extern const bool ShiftPWM_invertOutputs;
 CShiftMatrixPWM::CShiftMatrixPWM(int timerInUse) : m_timer(timerInUse){ //Timer is set in initializer list, because it is const
 	m_ledFrequency = 0;
 	m_maxBrightness = 0;
-	m_amountOfColumnRegisters = 0;    
+	m_amountOfColumnRegisters = 0;
 	m_amountOfColumns=0;
 	m_amountOfRows=0;
 	m_amountOfOutputs=0;
@@ -47,24 +47,24 @@ CShiftMatrixPWM::~CShiftMatrixPWM() {
 
 bool CShiftMatrixPWM::IsValidPin(int row, int col){
 	if(row>=m_amountOfRows){
-		Serial.print("Error: Trying to write duty cycle of row ");
-		Serial.print(row);
-		Serial.print(" , while number of rows is ");
-		Serial.print(m_amountOfRows,DEC); 
-		Serial.print(" , numbered 0-");
-		Serial.println(m_amountOfRows-1, DEC); 
+
+
+
+
+
+
 		delay(1000);
-		return 0;	
+		return 0;
 	}
 	if(col >= m_amountOfColumns){
-		Serial.print("Error: Trying to write duty cycle of column ");
-		Serial.print(col);
-		Serial.print(" , while number of columns is ");
-		Serial.print(m_amountOfColumns); 
-		Serial.print(" , numbered 0-");
-		Serial.println(m_amountOfColumns-1); 
+
+
+
+
+
+
 		delay(1000);
-		return 0;	
+		return 0;
 	}
 	return 1;
 }
@@ -79,7 +79,7 @@ void CShiftMatrixPWM::SetOne(int row, int col, unsigned char value){
 void CShiftMatrixPWM::SetAll(unsigned char value){
 	for(int k=0 ; k<(m_amountOfOutputs);k++){
 		m_PWMValues[k]=value;
-	}   
+	}
 }
 
 void CShiftMatrixPWM::SetGroupOf2(int row, int group, unsigned char v0,unsigned char v1){
@@ -132,12 +132,12 @@ void CShiftMatrixPWM::OneByOne_core(int delaytime){
 		for(int col=0;col<m_amountOfColumns;col++){
 			for(brightness=0;brightness<m_maxBrightness;brightness++){
 				m_PWMValues[row*m_amountOfColumns+col]=brightness;
-				delay(delaytime);          
-			} 
+				delay(delaytime);
+			}
 			for(brightness=m_maxBrightness;brightness>=0;brightness--){
 				m_PWMValues[row*m_amountOfColumns+col]=brightness;
 				delay(delaytime);
-			} 
+			}
 		}
 	}
 }
@@ -149,7 +149,7 @@ void CShiftMatrixPWM::SetMatrixSize(int newAmountOfRows, int newAmountOfColumnRe
 
 	m_amountOfColumnRegisters = newAmountOfColumnRegisters;
 	m_amountOfRows = newAmountOfRows;
-	
+
 	m_amountOfColumns = m_amountOfColumnRegisters*8;
 	m_amountOfOutputs = m_amountOfRows*m_amountOfColumns;
 
@@ -168,7 +168,7 @@ void CShiftMatrixPWM::SetMatrixSize(int newAmountOfRows, int newAmountOfColumnRe
 		m_amountOfRows = oldAmountOfRows;
 		m_amountOfColumns = m_amountOfColumnRegisters*8;
 		m_amountOfOutputs = m_amountOfRows*m_amountOfColumns;
-		Serial.println("Amount of registers is not increased, because load would become too high");
+
 		sei();
 	}
 }
@@ -176,16 +176,16 @@ void CShiftMatrixPWM::SetMatrixSize(int newAmountOfRows, int newAmountOfColumnRe
 bool CShiftMatrixPWM::LoadNotTooHigh(void){
 	// This function calculates if the interrupt load would become higher than 0.9 and prints an error if it would.
 	// This is with inverted outputs, which is worst case. Without inverting, it would be 42 per register.
-	float interruptDuration = 157+43* (float) m_amountOfColumnRegisters;	
+	float interruptDuration = 157+43* (float) m_amountOfColumnRegisters;
 	float interruptFrequency = (float) m_ledFrequency* (float) m_maxBrightness* (float) m_amountOfRows;
 	float load = interruptDuration*interruptFrequency/F_CPU;
 
 	if(load > 0.9){
-		Serial.print("New interrupt duration ="); Serial.print(interruptDuration); Serial.println("clock cycles");
-		Serial.print("New interrupt frequency ="); Serial.print(interruptFrequency); Serial.println("Hz");
-		Serial.print("New interrupt load would be ");
-		Serial.print(load);
-		Serial.println(" , which is too high.");
+
+
+
+
+
 		return 0;
 	}
 	else{
@@ -195,13 +195,13 @@ bool CShiftMatrixPWM::LoadNotTooHigh(void){
 }
 
 void CShiftMatrixPWM::Start(int ledFrequency, unsigned char maxBrightness){
-	// Configure and enable timer1 or timer 2 for a compare and match A interrupt.    
+	// Configure and enable timer1 or timer 2 for a compare and match A interrupt.
 
 	m_ledFrequency = ledFrequency;
 	m_maxBrightness = maxBrightness;
 
 	if(LoadNotTooHigh() ){
-		if(m_timer==1){ 
+		if(m_timer==1){
 			InitTimer1();
 		}
 		else if(m_timer==2){
@@ -209,13 +209,13 @@ void CShiftMatrixPWM::Start(int ledFrequency, unsigned char maxBrightness){
 		}
 	}
 	else{
-		Serial.println("Interrupts are disabled because load is too high.");
+
 		cli(); //Disable interrupts
 	}
 }
 
 void CShiftMatrixPWM::InitTimer1(void){
-	/* Configure timer1 in CTC mode: clear the timer on compare match 
+	/* Configure timer1 in CTC mode: clear the timer on compare match
 	* See the Atmega328 Datasheet 15.9.2 for an explanation on CTC mode.
 	* See table 15-4 in the datasheet. */
 
@@ -239,13 +239,13 @@ void CShiftMatrixPWM::InitTimer1(void){
 	* So the value we want for OCR1A is: timer clock frequency/(LED frequency * number of bightness levels)-1 */
 	m_prescaler = 1;
 	OCR1A = round((float) F_CPU/((float) m_amountOfRows*(float) m_ledFrequency*((float) m_maxBrightness+1)))-1;
-	/* Finally enable the timer interrupt 
+	/* Finally enable the timer interrupt
 	/* See datasheet  15.11.8) */
 	bitSet(TIMSK1,OCIE1A);
 }
 
 void CShiftMatrixPWM::InitTimer2(void){
-	/* Configure timer2 in CTC mode: clear the timer on compare match 
+	/* Configure timer2 in CTC mode: clear the timer on compare match
 	* See the Atmega328 Datasheet 15.9.2 for an explanation on CTC mode.
 	* See table 17-8 in the datasheet. */
 
@@ -287,7 +287,7 @@ void CShiftMatrixPWM::InitTimer2(void){
 		* We want the frequency of the timer to be (LED frequency)*(number of brightness levels)
 		* So the value we want for OCR2A is: timer clock frequency/(LED frequency * number of bightness levels)-1 */
 		OCR2A = round(   (  (float) F_CPU / (float) m_prescaler ) /  ((float) m_amountOfRows* (float) m_ledFrequency*( (float) m_maxBrightness+1) ) -1);
-		/* Finally enable the timer interrupt 
+		/* Finally enable the timer interrupt
 		/* See datasheet  15.11.8) */
 		bitSet(TIMSK2,OCIE2A);
 }
@@ -308,7 +308,7 @@ void CShiftMatrixPWM::PrintInterruptLoad(void){
 		}
 		else{
 			// interrupt is disabled
-			Serial.println("Interrupt is disabled.");
+
 			return;
 		}
 	}
@@ -318,7 +318,7 @@ void CShiftMatrixPWM::PrintInterruptLoad(void){
 		}
 		else{
 			// interrupt is disabled
-			Serial.println("Interrupt is disabled.");
+
 			return;
 		}
 	}
@@ -326,13 +326,13 @@ void CShiftMatrixPWM::PrintInterruptLoad(void){
 	//run with interrupt enabled
 	start1 = micros();
 	for(k=0; k<100000; k++){
-		delayMicroseconds(1); 
+		delayMicroseconds(1);
 	}
-	end1 = micros();  
-	time1 = end1-start1; 
+	end1 = micros();
+	time1 = end1-start1;
 
 	//Disable Interrupt
-	if(m_timer==1){ 
+	if(m_timer==1){
 		bitClear(TIMSK1,OCIE1A);
 	}
 	else if(m_timer==2){
@@ -343,45 +343,45 @@ void CShiftMatrixPWM::PrintInterruptLoad(void){
 	// run with interrupt disabled
 	start2 = micros();
 	for(k=0; k<100000; k++){
-		delayMicroseconds(1); 
+		delayMicroseconds(1);
 	}
 	end2 = micros();
 	time2 = end2-start2;
 
 	// ready for calculations
 	load = (double)(time1-time2)/(double)(time1);
-	if(m_timer==1){   
+	if(m_timer==1){
 		interrupt_frequency = (F_CPU/m_prescaler)/(OCR1A+1);
 	}
 	else if(m_timer==2){
-		interrupt_frequency = (F_CPU/m_prescaler)/(OCR2A+1);  
+		interrupt_frequency = (F_CPU/m_prescaler)/(OCR2A+1);
 	}
 	cycles_per_int = load*(F_CPU/interrupt_frequency);
 
 	//Ready to print information
-	Serial.print("Load of interrupt: ");   Serial.println(load,10); 
-	Serial.print("Clock cycles per interrupt: ");   Serial.println(cycles_per_int); 
-	Serial.print("Interrupt frequency: "); Serial.print(interrupt_frequency);   Serial.println(" Hz");
-	Serial.print("PWM frequency: "); Serial.print(interrupt_frequency/(m_maxBrightness+1)); Serial.println(" Hz");
-	Serial.print("Divided over "); Serial.print(m_amountOfRows, DEC); Serial.print(" rows, to have a total refresh rate of "); 
-	Serial.print(interrupt_frequency/(m_amountOfRows*(m_maxBrightness+1))); Serial.println(" Hz");
 
-	if(m_timer==1){   
-		Serial.println("Timer1 in use for highest precision."); 
-		Serial.println("Include servo.h to use timer2.");
-		Serial.print("OCR1A: "); Serial.println(OCR1A, DEC);
-		Serial.print("Prescaler: "); Serial.println(m_prescaler);
 
-		//Re-enable Interrupt	
-		bitSet(TIMSK1,OCIE1A); 
+
+
+
+
+
+	if(m_timer==1){
+
+
+
+
+
+		//Re-enable Interrupt
+		bitSet(TIMSK1,OCIE1A);
 	}
 	else if(m_timer==2){
-		Serial.println("Timer2 in use, because Timer1 is used by servo library.");
-		Serial.print("OCR2A: "); Serial.println(OCR2A, DEC);
-		Serial.print("Presclaler: "); Serial.println(m_prescaler);  
 
-		//Re-enable Interrupt	
-		bitSet(TIMSK2,OCIE2A); 
+
+
+
+		//Re-enable Interrupt
+		bitSet(TIMSK2,OCIE2A);
 	}
 }
 

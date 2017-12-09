@@ -47,12 +47,12 @@ bool CShiftPWM::IsValidPin(int pin){
 		return 1;
 	}
 	else{
-		Serial.print(F("Error: Trying to write duty cycle of pin "));
-		Serial.print(pin);
-		Serial.print(F(" , while number of outputs is "));
-		Serial.print(m_amountOfOutputs);
-		Serial.print(F(" , numbered 0-"));
-		Serial.println(m_amountOfOutputs-1);
+
+
+
+
+
+
 		delay(1000);
 		return 0;
 	}
@@ -225,7 +225,7 @@ void CShiftPWM::SetAmountOfRegisters(unsigned char newAmount){
 		// New value would result in deadlock, keep old values and print an error message
 		m_amountOfRegisters = oldAmount;
 		m_amountOfOutputs=m_amountOfRegisters*8;
-		Serial.println(F("Amount of registers is not increased, because load would become too high"));
+
 		sei();
 	}
 }
@@ -249,11 +249,11 @@ bool CShiftPWM::LoadNotTooHigh(void){
 	float load = interruptDuration*interruptFrequency/F_CPU;
 
 	if(load > 0.9){
-		Serial.print(F("New interrupt duration =")); Serial.print(interruptDuration); Serial.println(F("clock cycles"));
-		Serial.print(F("New interrupt frequency =")); Serial.print(interruptFrequency); Serial.println(F("Hz"));
-		Serial.print(F("New interrupt load would be "));
-		Serial.print(load);
-		Serial.println(F(" , which is too high."));
+
+
+
+
+
 		return 0;
 	}
 	else{
@@ -318,7 +318,7 @@ void CShiftPWM::Start(int ledFrequency, unsigned char maxBrightness){
 		#endif
 	}
 	else{
-		Serial.println(F("Interrupts are disabled because load is too high."));
+
 		cli(); //Disable interrupts
 	}
 }
@@ -453,7 +453,7 @@ void CShiftPWM::PrintInterruptLoad(void){
 		}
 		else{
 			// interrupt is disabled
-			Serial.println(F("Interrupt is disabled."));
+
 			return;
 		}
 	}
@@ -464,7 +464,7 @@ void CShiftPWM::PrintInterruptLoad(void){
 			}
 			else{
 				// interrupt is disabled
-				Serial.println(F("Interrupt is disabled."));
+
 				return;
 			}
 		}
@@ -475,7 +475,7 @@ void CShiftPWM::PrintInterruptLoad(void){
 			}
 			else{
 				// interrupt is disabled
-				Serial.println(F("Interrupt is disabled."));
+
 				return;
 			}
 		}
@@ -529,44 +529,44 @@ void CShiftPWM::PrintInterruptLoad(void){
 	cycles_per_int = load*(F_CPU/interrupt_frequency);
 
 	//Ready to print information
-	Serial.print(F("Load of interrupt: "));   Serial.println(load,10);
-	Serial.print(F("Clock cycles per interrupt: "));   Serial.println(cycles_per_int);
-	Serial.print(F("Interrupt frequency: ")); Serial.print(interrupt_frequency);   Serial.println(F(" Hz"));
-	Serial.print(F("PWM frequency: ")); Serial.print(interrupt_frequency/(m_maxBrightness+1)); Serial.println(F(" Hz"));
+
+
+
+
 
 
 	#if defined(USBCON)
 		if(m_timer==1){
-			Serial.println(F("Timer1 in use."));
-			Serial.println(F("add '#define SHIFTPWM_USE_TIMER3' before '#include <ShiftPWM.h>' to switch to timer 3."));
-			Serial.print(F("OCR1A: ")); Serial.println(OCR1A, DEC);
-			Serial.print(F("Prescaler: ")); Serial.println(m_prescaler);
+
+
+
+
 
 			//Re-enable Interrupt
 			bitSet(TIMSK1,OCIE1A);
 		}
 			else if(m_timer==3){
-			Serial.println(F("Timer3 in use."));
-			Serial.print(F("OCR3A: ")); Serial.println(OCR3A, DEC);
-			Serial.print(F("Presclaler: ")); Serial.println(m_prescaler);
+
+
+
 
 			//Re-enable Interrupt
 			bitSet(TIMSK3,OCIE3A);
 		}
 	#else
 		if(m_timer==1){
-			Serial.println(F("Timer1 in use for highest precision."));
-			Serial.println(F("add '#define SHIFTPWM_USE_TIMER2' before '#include <ShiftPWM.h>' to switch to timer 2."));
-			Serial.print(F("OCR1A: ")); Serial.println(OCR1A, DEC);
-			Serial.print(F("Prescaler: ")); Serial.println(m_prescaler);
+
+
+
+
 
 			//Re-enable Interrupt
 			bitSet(TIMSK1,OCIE1A);
 		}
 		else if(m_timer==2){
-			Serial.println(F("Timer2 in use."));
-			Serial.print(F("OCR2A: ")); Serial.println(OCR2A, DEC);
-			Serial.print(F("Presclaler: ")); Serial.println(m_prescaler);
+
+
+
 
 			//Re-enable Interrupt
 			bitSet(TIMSK2,OCIE2A);
